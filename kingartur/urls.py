@@ -18,12 +18,12 @@ from django.contrib import admin
 from django.urls import include, path
 from kingartur import settings
 
-from testapp.views import *
+from books.views import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('testapp.urls')),       # https://127.0.0.1/
+    path('', include('books.urls')),       # https://127.0.0.1/
 ]
 
 if settings.DEBUG:

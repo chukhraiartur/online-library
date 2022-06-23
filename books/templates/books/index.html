@@ -1,0 +1,15 @@
+{% extends 'books/base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<ul>
+    {% for book in db_books %}
+    <li>
+        <h2>{{ book.title }}</h2>
+        <h3>{{ book.author }}</h3>
+        <p>{{ book.description }}</p>
+        <hr>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
