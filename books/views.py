@@ -1,17 +1,46 @@
+from http.client import HTTPResponse
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render
 from .models import *
 
-menu = ['Главная страница', 'О сайте', 'Поиск книги', 'Добавить книгу', 'Обратная связь', 'Войти']
+menu = [
+    {'title': 'О сайте', 'url_name': 'about'},
+    {'title': 'Добавить статью', 'url_name': 'add_page'},
+    {'title': 'Обратная связь', 'url_name': 'contact'},
+    {'title': 'Войти', 'url_name': 'login'},
+]
 
 # Create your views here.
 def index(request):
-    db_books = Books.objects.all()
-    return render(request, 'books/index.html', {'db_books': db_books, 'menu': menu, 'title': 'Главная страница'})
+    posts = Books.objects.all()
+    context = {
+        'posts': posts,
+        'menu': menu,
+        'title': 'Главная страница'
+    }
+    return render(request, 'books/index.html', context=context)
 
 def about(request):
-    db_books = Books.objects.all()
-    return render(request, 'books/about.html', {'db_books': db_books, 'menu': menu, 'title': 'О сайте'})
+    return render(request, 'books/about.html', {'menu': menu, 'title': 'О сайте'})
+
+def addpage(request):
+    return HttpResponse('Добавление статьи')
+
+def contact(request):
+    return HttpResponse('Обратная связь')
+
+def login(request):
+    return HttpResponse('Авторизация')
+
+
+
+def pageNotFound(request, exception):
+    return HttpResponseNotFound(f"<h1>Oops...</h1>")
+
+
+
+
+
 
 def books(request, bookid):
     return HttpResponse(f"<h1>The book {bookid} view.</h1>")
@@ -23,5 +52,3 @@ def archive(request, year):
         raise Http404()
     return HttpResponse(f"<h1>The books {year} view.</h1>")
 
-def pageNotFound(request, exception):
-    return HttpResponseNotFound(f"<h1>Oops...</h1>")
