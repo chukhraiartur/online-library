@@ -23,7 +23,7 @@ def index(request):
 def about(request):
     return render(request, 'books/about.html', {'menu': menu, 'title': 'О сайте'})
 
-def addpage(request):
+def add_page(request):
     return HttpResponse('Добавление статьи')
 
 def contact(request):
@@ -32,6 +32,8 @@ def contact(request):
 def login(request):
     return HttpResponse('Авторизация')
 
+def show_books(request, book_id):
+    return HttpResponse(f'Отображение статьи с id = {book_id}')
 
 
 def pageNotFound(request, exception):
