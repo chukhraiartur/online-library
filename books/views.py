@@ -4,10 +4,10 @@ from django.shortcuts import redirect, render
 from .models import *
 
 menu = [
-    {'title': 'О сайте', 'url_name': 'about'},
-    {'title': 'Добавить статью', 'url_name': 'add_page'},
-    {'title': 'Обратная связь', 'url_name': 'contact'},
-    {'title': 'Войти', 'url_name': 'login'},
+    {'title': 'About', 'url_name': 'about'},
+    {'title': 'Add page', 'url_name': 'add_page'},
+    {'title': 'Contact', 'url_name': 'contact'},
+    {'title': 'Login', 'url_name': 'login'},
 ]
 
 # Create your views here.

@@ -4,13 +4,16 @@
 <ul class="list-articles">
 	{% for book in posts %}
 		<li>
+			{% if book.photo %}
+				<p><img class="img-article-left thump" src="{{ book.photo.url }}" alt="photo"></p>
+			{% endif %}
 			<h2>{{book.title}}</h2>
 			<h3>{{book.author}}</h3>
 			{% autoescape on %}
 				{{book.description|linebreaks|truncatewords:50}}
 			{% endautoescape %}
 			<div class="clear"></div>
-			<p class="link-read-post"><a href="{{ book.get_absolute_url }}">Читать пост</a></p>
+			<p class="link-read-post"><a href="{{ book.get_absolute_url }}">Read book</a></p>
 		</li>
 	{% endfor %}
 </ul>
