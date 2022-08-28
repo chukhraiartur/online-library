@@ -5,12 +5,13 @@ from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=100, db_index=True, verbose_name='Category')
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('category', kwargs={'cat_id': self.pk})
+        return reverse('category', kwargs={'cat_slug': self.slug})
 
     class Meta:
         verbose_name = 'Category'
@@ -20,6 +21,7 @@ class Category(models.Model):
 
 class Books(models.Model):
     title = models.CharField(max_length=255, verbose_name='Title')      # verbose_name - определяет название колонки для админ панели и не является обязательным параметром
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
     author = models.TextField(blank=True, verbose_name='Author')
     description = models.TextField(blank=True, verbose_name='Description')
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name='Photo')
@@ -28,13 +30,13 @@ class Books(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Publication')
     # language, rate, time_read, number_of_pages
     # жанр, теги, доступные форматы для скачивания, автор перевода, автор озвучки 
-    cat = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, verbose_name='Category')
+    cat = models.ForeignKey(Category, on_delete=models.PROTECT, verbose_name='Category')
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('show_books', kwargs={'book_id': self.pk})
+        return reverse('show_book', kwargs={'book_slug': self.slug})
 
     class Meta:
         verbose_name = 'Famous book'

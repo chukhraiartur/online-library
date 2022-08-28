@@ -2,7 +2,7 @@
 
 {% block content %}
 <ul class="list-articles">
-	{% for book in posts %}
+	{% for book in books %}
 		<li>
 			<div class="article-panel">
 				<p class="first">Category: <a href="{{ book.cat.get_absolute_url }}">{{book.cat}}</a></p>

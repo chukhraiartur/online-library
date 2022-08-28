@@ -1,6 +1,7 @@
 from http.client import HTTPResponse
+import pkgutil
 from django.http import Http404, HttpResponse, HttpResponseNotFound
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from .models import *
 
 menu = [
@@ -12,13 +13,15 @@ menu = [
 
 # Create your views here.
 def index(request):
-    posts = Books.objects.all()
+    books = Books.objects.all()
+
     context = {
-        'posts': posts,
+        'books': books,
         'menu': menu,
-        'title': 'Главная страница',
+        'title': 'Main page',
         'cat_selected': 0,
     }
+
     return render(request, 'books/index.html', context=context)
 
 def about(request):
@@ -33,20 +36,31 @@ def contact(request):
 def login(request):
     return HttpResponse('Авторизация')
 
-def show_books(request, book_id):
-    return HttpResponse(f'Отображение статьи с id = {book_id}')
+def show_book(request, book_slug):
+    book = get_object_or_404(Books, slug=book_slug)
 
-def show_category(request, cat_id):
-    posts = Books.objects.filter(cat_id=cat_id)
+    context = {
+        'book': book,
+        'menu': menu,
+        'title': book.title,
+        'cat_selected': book.cat_id,
+    }
 
-    if len(posts) == 0:
+    return render(request, 'books/book.html', context=context)
+
+
+def show_category(request, cat_slug):
+    cat = Category.objects.get(slug=cat_slug)
+    books = Books.objects.filter(cat_id=cat.id)
+
+    if len(books) == 0:
         raise Http404()
 
     context = {
-        'posts': posts,
+        'books': books,
         'menu': menu,
-        'title': 'Отображение по рубрикам',
-        'cat_selected': cat_id,
+        'title': 'Display by category',
+        'cat_selected': cat.id,
     }
 
     return render(request, 'books/index.html', context=context)

@@ -1,0 +1,12 @@
+{% extends 'books/base.html' %}
+
+{% block content %}
+
+<h1>{{book.title}}</h1>
+
+{% if book.photo %}
+<p><img class="img-article-left" src="{{book.photo.url}}" alt="photo"></p>
+{% endif %}
+
+{{book.description|linebreaks}}
+{% endblock %}
