@@ -9,6 +9,9 @@ urlpatterns = [
     path('contact/', contact, name='contact'),                      # http://127.0.0.1:8000/contact/
     path('login/', login, name='login'),                            # http://127.0.0.1:8000/login/
     path('books/<int:book_id>/', show_books, name='show_books'),    # http://127.0.0.1:8000/books/1/
+    path('category/<int:cat_id>/', show_category, name='category'), # http://127.0.0.1:8000/category/1/
+    
+    
     
     re_path(r'^archive/(?P<year>[0-9]{4})/', archive)               # http://127.0.0.1:8000/archive/2022/
 ]

@@ -4,6 +4,10 @@
 <ul class="list-articles">
 	{% for book in posts %}
 		<li>
+			<div class="article-panel">
+				<p class="first">Category: <a href="{{ book.cat.get_absolute_url }}">{{book.cat}}</a></p>
+				<p class="last">Date: {{book.time_update|date:"d-m-Y H:i:s"}}</p>
+			</div>
 			{% if book.photo %}
 				<p><img class="img-article-left thump" src="{{ book.photo.url }}" alt="photo"></p>
 			{% endif %}

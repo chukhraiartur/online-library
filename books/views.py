@@ -16,7 +16,8 @@ def index(request):
     context = {
         'posts': posts,
         'menu': menu,
-        'title': 'Главная страница'
+        'title': 'Главная страница',
+        'cat_selected': 0,
     }
     return render(request, 'books/index.html', context=context)
 
@@ -35,6 +36,20 @@ def login(request):
 def show_books(request, book_id):
     return HttpResponse(f'Отображение статьи с id = {book_id}')
 
+def show_category(request, cat_id):
+    posts = Books.objects.filter(cat_id=cat_id)
+
+    if len(posts) == 0:
+        raise Http404()
+
+    context = {
+        'posts': posts,
+        'menu': menu,
+        'title': 'Отображение по рубрикам',
+        'cat_selected': cat_id,
+    }
+
+    return render(request, 'books/index.html', context=context)
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound(f"<h1>Oops...</h1>")
