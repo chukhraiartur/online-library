@@ -3,6 +3,7 @@ import pkgutil
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import *
+from .forms import *
 
 menu = [
     {'title': 'About', 'url_name': 'about'},
@@ -13,7 +14,8 @@ menu = [
 
 # Create your views here.
 def index(request):
-    books = Books.objects.all()
+    # books = Books.objects.all()
+    books = Books.objects.order_by('-time_create')
 
     context = {
         'books': books,
@@ -25,10 +27,25 @@ def index(request):
     return render(request, 'books/index.html', context=context)
 
 def about(request):
-    return render(request, 'books/about.html', {'menu': menu, 'title': 'О сайте'})
+    return render(request, 'books/about.html', {'menu': menu, 'title': 'About the site'})
 
 def add_page(request):
-    return HttpResponse('Добавление статьи')
+    if request.method == 'POST':
+        form = AddBookForm(request.POST, request.FILES)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            form.save()
+            return redirect('home')       
+    else:
+        form = AddBookForm()
+
+    context = {
+        'form': form, 
+        'menu': menu, 
+        'title': 'Add a book that you like and want to share with other people 😊'
+    }
+
+    return render(request, 'books/add_page.html', context=context)
 
 def contact(request):
     return HttpResponse('Обратная связь')
