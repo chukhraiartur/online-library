@@ -39,6 +39,6 @@ class Books(models.Model):
         return reverse('show_book', kwargs={'book_slug': self.slug})
 
     class Meta:
-        verbose_name = 'Famous book'
-        verbose_name_plural = 'Famous books'
+        verbose_name = 'Book'
+        verbose_name_plural = 'Books'
         ordering = ['time_create', 'title']

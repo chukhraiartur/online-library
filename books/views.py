@@ -7,7 +7,7 @@ from .forms import *
 
 menu = [
     {'title': 'About', 'url_name': 'about'},
-    {'title': 'Add page', 'url_name': 'add_page'},
+    {'title': 'Add book', 'url_name': 'add_book'},
     {'title': 'Contact', 'url_name': 'contact'},
     {'title': 'Login', 'url_name': 'login'},
 ]
@@ -29,7 +29,7 @@ def index(request):
 def about(request):
     return render(request, 'books/about.html', {'menu': menu, 'title': 'About the site'})
 
-def add_page(request):
+def add_book(request):
     if request.method == 'POST':
         form = AddBookForm(request.POST, request.FILES)
         if form.is_valid():
@@ -45,7 +45,7 @@ def add_page(request):
         'title': 'Add a book that you like and want to share with other people 😊'
     }
 
-    return render(request, 'books/add_page.html', context=context)
+    return render(request, 'books/add_book.html', context=context)
 
 def contact(request):
     return HttpResponse('Обратная связь')

@@ -5,7 +5,7 @@ from .views import *
 urlpatterns = [
     path('', index, name='home'),                                       # http://127.0.0.1:8000/
     path('about/', about, name='about'),                                # http://127.0.0.1:8000/about/
-    path('addpage/', add_page, name='add_page'),                        # http://127.0.0.1:8000/addpage/
+    path('addbook/', add_book, name='add_book'),                        # http://127.0.0.1:8000/addbook/
     path('contact/', contact, name='contact'),                          # http://127.0.0.1:8000/contact/
     path('login/', login, name='login'),                                # http://127.0.0.1:8000/login/
     path('book/<slug:book_slug>/', show_book, name='show_book'),        # http://127.0.0.1:8000/books/1/
