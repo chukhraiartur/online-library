@@ -20,13 +20,19 @@ from kingartur import settings
 
 from books.views import *
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('captcha/', include('captcha.urls')),
     path('', include('books.urls')),       # https://127.0.0.1/
 ]
 
 if settings.DEBUG:
+    # import debug_toolbar
+
+    urlpatterns = [
+        path('__debug__/', include('debug_toolbar.urls')),
+    ] + urlpatterns
+
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 handler404 = pageNotFound
