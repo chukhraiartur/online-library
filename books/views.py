@@ -1,86 +1,53 @@
-from http.client import HTTPResponse
-# import pkgutil
-from django.views.generic import ListView, DetailView, CreateView
+from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import login, logout
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
+from django.core.cache import cache
+from django.core.mail import send_mail
+
 from .models import *
 from .forms import *
+from .utils import *
 
-menu = [
-    {'title': 'About', 'url_name': 'about'},
-    {'title': 'Add book', 'url_name': 'add_book'},
-    {'title': 'Contact', 'url_name': 'contact'},
-    {'title': 'Login', 'url_name': 'login'},
-]
 
-# Create your views here.
-
-class BooksHome(ListView):
+class BooksHome(DataMixin, ListView):
     model = Books
     template_name = 'books/index.html'
     context_object_name = 'books'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Main page'
-        context['menu'] = menu
-        context['cat_selected'] = 0
-        return context
+        c_def = self.get_user_context(title='Main page')
+        return dict(list(context.items()) + list(c_def.items()))
     
     def get_queryset(self):
-        return Books.objects.filter(is_published=True).order_by('-time_create')
+        books = cache.get('books')
+        if not books:
+            books = Books.objects.filter(is_published=True).order_by('-time_create').select_related('cat')
+            cache.set('books', books, 60)
+        return books
 
-# def index(request):
-#     # books = Books.objects.all()
-#     books = Books.objects.order_by('-time_create')
 
-#     context = {
-#         'books': books,
-#         'menu': menu,
-#         'title': 'Main page',
-#         'cat_selected': 0,
-#     }
-
-#     return render(request, 'books/index.html', context=context)
-
-def about(request):
-    return render(request, 'books/about.html', {'menu': menu, 'title': 'About the site'})
-
-class AddBook(CreateView):
+class AddBook(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddBookForm
     template_name = 'books/add_book.html'
-
+    success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
+    # raise_exception = True
+    
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Add book'
-        context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title='Add book')
+        return dict(list(context.items()) + list(c_def.items()))
 
-# def add_book(request):
-#     if request.method == 'POST':
-#         form = AddBookForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             # print(form.cleaned_data)
-#             form.save()
-#             return redirect('home')       
-#     else:
-#         form = AddBookForm()
 
-#     context = {
-#         'form': form, 
-#         'menu': menu, 
-#         'title': 'Add a book that you like and want to share with other people 😊'
-#     }
-
-#     return render(request, 'books/add_book.html', context=context)
-
-def contact(request):
-    return HttpResponse('Обратная связь')
-
-def login(request):
-    return HttpResponse('Авторизация')
-
-class ShowBook(DetailView):
+class ShowBook(DataMixin, DetailView):
     model = Books
     template_name = 'books/book.html'
     context_object_name = 'book'
@@ -88,26 +55,11 @@ class ShowBook(DetailView):
     
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['book']
-        context['menu'] = menu
-        # context['cat_selected'] = Category.objects.get(slug=self.kwargs['cat_slug']).id
-        context['cat_selected'] = context['book'].cat_id
-        return context
-
-# def show_book(request, book_slug):
-#     book = get_object_or_404(Books, slug=book_slug)
-
-#     context = {
-#         'book': book,
-#         'menu': menu,
-#         'title': book.title,
-#         'cat_selected': book.cat_id,
-#     }
-
-#     return render(request, 'books/book.html', context=context)
+        c_def = self.get_user_context(title=context['book'])
+        return dict(list(context.items()) + list(c_def.items()))
 
 
-class BooksCategory(ListView):
+class BooksCategory(DataMixin, ListView):
     model = Books
     template_name = 'books/index.html'
     context_object_name = 'books'
@@ -115,41 +67,80 @@ class BooksCategory(ListView):
     
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Display by ' + str(context['books'][0].cat)
-        context['menu'] = menu
-        # context['cat_selected'] = Category.objects.get(slug=self.kwargs['cat_slug']).id
-        context['cat_selected'] = context['books'][0].cat_id
-        return context
+        category = Category.objects.get(slug=self.kwargs['cat_slug'])
+        c_def = self.get_user_context(title='Display by ' + str(category.name), cat_selected=category.pk)
+        return dict(list(context.items()) + list(c_def.items()))
+
 
     def get_queryset(self):
-        return Books.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
+        return Books.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True).select_related('cat')
 
-# def show_category(request, cat_slug):
-#     cat = Category.objects.get(slug=cat_slug)
-#     books = Books.objects.filter(cat_id=cat.id)
 
-#     if len(books) == 0:
-#         raise Http404()
+class SignUpUser(DataMixin, CreateView):
+    form_class = SignUpUserForm
+    template_name = 'books/sign_up.html'
+    success_url = reverse_lazy('sign_in')
 
-#     context = {
-#         'books': books,
-#         'menu': menu,
-#         'title': 'Display by category',
-#         'cat_selected': cat.id,
-#     }
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Sign Up')
+        return dict(list(context.items()) + list(c_def.items()))
 
-#     return render(request, 'books/index.html', context=context)
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('home')
 
+
+class SignInUser(DataMixin, LoginView):
+    form_class = SignInUserForm
+    template_name = 'books/sign_in.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Sign In')
+        return dict(list(context.items()) + list(c_def.items()))
+
+
+# FormView - the standard base class for forms that are not model-bound. This form will not work with DB
+class ContactFormView(SuccessMessageMixin, DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'books/contact.html'
+    success_url = reverse_lazy('contact')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Contact')
+        return dict(list(context.items()) + list(c_def.items()))
+    
+    def form_valid(self, form):
+        send_mail(
+            subject=f"Contact Form Submission from {form.cleaned_data['name']}",
+            message=form.cleaned_data['message'],
+            from_email=form.cleaned_data['email'],
+            recipient_list=['arturchukhrai@gmail.com'],  # Your work email
+            fail_silently=False,
+        )
+        messages.success(self.request, "Your message has been successfully sent!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error in the contact form submission.")
+        return super().form_invalid(form)
+        
+
+def sign_out_user(request):
+    logout(request)
+    return redirect('sign_in')
+    
 def pageNotFound(request, exception):
     return HttpResponseNotFound(f"<h1>Oops...</h1>")
 
-
-
-
-
-
 def books(request, bookid):
     return HttpResponse(f"<h1>The book {bookid} view.</h1>")
+
+def about(request):
+    return render(request, 'books/about.html', {'menu': menu, 'title': 'About the site'})
 
 def archive(request, year):
     if int(year) == 2021:
@@ -157,4 +148,3 @@ def archive(request, year):
     if int(year) > 2022:
         raise Http404()
     return HttpResponse(f"<h1>The books {year} view.</h1>")
-
