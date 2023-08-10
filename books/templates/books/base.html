@@ -17,13 +17,20 @@
 				<div class="header">
 					<ul id="mainmenu" class="mainmenu">
 						<li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
+						
 						{% for m in menu %}
-							{% if not forloop.last %}
 						<li><a href="{% url m.url_name %}">{{m.title}}</a></li>
-							{% else %}
-						<li class="last"><a href="{% url m.url_name %}">{{m.title}}</a></li>
-							{% endif %}
 						{% endfor %}
+						
+						{% if request.user.is_authenticated %}
+						<li class="last">
+							{{ user.username }} | <a href="{% url 'sign_out' %}">Sign Out</a>
+						</li>
+						{% else %}
+						<li class="last">
+							<a href="{% url 'sign_in' %}">Sign In</a> | <a href="{% url 'sign_up' %}">Sign Up</a>
+						</li>
+						{% endif %}
 					</ul>
 					<div class="clear"></div>
 				</div>
@@ -43,7 +50,17 @@
 								{% endif %}
 
 								<!-- The inclusion tag show_categories fires, which creates the template and returns it. -->
-								{% show_categories 'name' cat_selected %}
+								<!-- {% show_categories 'name' cat_selected %} -->
+
+								{% for cat in cats %}
+									{% if cat.books__count > 0 %}
+										{% if cat.pk == cat_selected %}
+										<li class="selected">{{cat.name}}</li>
+										{% else %}
+										<li><a href="{{ cat.get_absolute_url }}">{{cat.name}}</a></li>
+										{% endif %}
+									{% endif %}
+								{% endfor %}
 							</ul>
 						</td>
 						<!-- Конец Sidebar'а -->
@@ -56,6 +73,9 @@
 							<div class="content-text">
 								{% block content %}
 								{% endblock %}
+
+								<!-- Pagination -->
+								{% include 'includes/paginator.html' %}
 							</div>
 						<!-- Конец блока контента -->
 						</td>
@@ -64,11 +84,13 @@
 			</td>
 		</tr>
 		<!-- Footer -->
-		<tr><td valign=top>
-			<div id="footer">
-				<p>&copy; 2022 Частичное или полное копирование информации с данного сайта для распространения на других ресурсах, в том числе и бумажных, строго запрещено.</p>
-			</div>
-		</td></tr>
+		<!-- <tr>
+			<td valign=top>
+				<div id="footer">
+					<p>&copy; 2023 </p>
+				</div>
+			</td>
+		</tr> -->
 	</table>
 	<!-- Конец footer'а и страницы -->
 </body>
