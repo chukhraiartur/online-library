@@ -16,6 +16,7 @@ In this project, I used technologies such as:
 - Bootstrap
 - HTML
 - CSS
+- PostgreSQL
 - Redis
 
 Implemented features such as:
