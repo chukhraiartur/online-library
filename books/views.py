@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.views.generic import ListView, DetailView, CreateView, FormView
+from django.views.generic import ListView, DetailView, CreateView, FormView, TemplateView
 from django.http import Http404, HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,6 +10,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django.db.models import Q
+from dal import autocomplete
 
 from .models import *
 from .forms import *
@@ -136,15 +138,27 @@ def sign_out_user(request):
 def pageNotFound(request, exception):
     return HttpResponseNotFound(f"<h1>Oops...</h1>")
 
-def books(request, bookid):
-    return HttpResponse(f"<h1>The book {bookid} view.</h1>")
 
-def about(request):
-    return render(request, 'books/about.html', {'menu': menu, 'title': 'About the site'})
+class Autocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Books.objects.all()
 
-def archive(request, year):
-    if int(year) == 2021:
-        return redirect('home', permanent=False)
-    if int(year) > 2022:
-        raise Http404()
-    return HttpResponse(f"<h1>The books {year} view.</h1>")
+        if self.q:
+            qs = qs.filter(title__icontains=self.q) | qs.filter(author__icontains=self.q)
+
+        return qs
+
+
+class Search(DataMixin, TemplateView):
+    template_name = 'books/search.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_query = self.request.GET.get('q', '')
+        context['form'] = BookSearchForm()
+        context['search_query'] = search_query
+        context['books'] = Books.objects.filter(
+            Q(title__icontains=search_query) | Q(author__icontains=search_query)
+        )
+        c_def = self.get_user_context(title='Search')
+        return dict(list(context.items()) + list(c_def.items()))

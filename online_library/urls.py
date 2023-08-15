@@ -22,6 +22,7 @@ from books.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('captcha/', include('captcha.urls')),
     path('', include('books.urls')),       # https://127.0.0.1/
 ]

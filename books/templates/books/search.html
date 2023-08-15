@@ -1,0 +1,31 @@
+{% extends 'books/base.html' %}
+
+{% block content %}
+
+<h2>Search Results for "{{ search_query }}":</h2>
+
+<ul class="list-articles">
+	{% for book in books %}
+		<li>
+			<div class="article-panel">
+				<p class="first">Category: <a href="{{ book.cat.get_absolute_url }}">{{book.cat}}</a></p>
+				<p class="last">Date: {{book.time_update|date:"d-m-Y H:i:s"}}</p>
+			</div>
+			{% if book.photo %}
+				<p><img class="img-article-left thump" src="{{ book.photo.url }}" alt="photo"></p>
+			{% endif %}
+			<h2>{{book.title}}</h2>
+			<h3>{{book.author}}</h3>
+			{% autoescape on %}
+				{{book.description|linebreaks|truncatewords:50}}
+			{% endautoescape %}
+			<div class="clear"></div>
+			<p class="link-read-post"><a href="{{ book.get_absolute_url }}">Read book</a></p>
+		</li>
+        
+	{% endfor %}
+</ul>
+
+<br>
+
+{% endblock %}

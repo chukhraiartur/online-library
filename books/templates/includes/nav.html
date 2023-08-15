@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a href="{% url 'home' %}"><img src="/static/books/images/logo.png" width=50 height=50 style="margin-right:10px;" alt="Logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                {% for m in menu %}
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url m.url_name %}">{{ m.title }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <form class="d-flex mx-auto" role="search" method="get" action="{% url 'search' %}">
+                <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search" list="books">
+                <datalist id="books">
+                    {% for book in books %}
+                    <option value="{{book.title}}"></option>
+                    {% endfor %}
+                </datalist>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+
+            <ul class="navbar-nav ml-auto">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item"><span class="nav-link">{{ request.user.username }}</span></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'sign_out' %}">Sign Out</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'sign_in' %}">Sign In</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'sign_up' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -3,7 +3,6 @@ from django.db.models import Count
 from django.core.cache import cache
 
 menu = [
-    {'title': 'About', 'url_name': 'about'},
     {'title': 'Add book', 'url_name': 'add_book'},
     {'title': 'Contact', 'url_name': 'contact'},
 ]
@@ -20,7 +19,7 @@ class DataMixin:
 
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
-            user_menu.pop(1)
+            user_menu.pop(0)
 
         context['menu'] = user_menu
         context['cats'] = cats
