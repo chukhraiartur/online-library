@@ -6,9 +6,9 @@
 
 This project is the online library. 
 
-The guest can view books by category. Books can be read or downloaded in the presented format. 
+The guest can view books by category and search books by title or author. Books can be downloaded in the PDF format. 
 
-The user can add his own books, mark other books as favorites and write comments.
+The user can add his own books and mark other books as favorites.
 
 In this project, I used technologies such as:
 - Python
