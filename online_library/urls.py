@@ -17,19 +17,16 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from online_library import settings
-
-from books.views import *
+from books.views import pageNotFound
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('captcha/', include('captcha.urls')),
-    path('', include('books.urls')),       # https://127.0.0.1/
+    path('', include('books.urls')),
 ]
 
 if settings.DEBUG:
-    # import debug_toolbar
-
     urlpatterns = [
         path('__debug__/', include('debug_toolbar.urls')),
     ] + urlpatterns

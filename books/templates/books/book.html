@@ -4,9 +4,36 @@
 
 <h1>{{book.title}}</h1>
 
-{% if book.photo %}
-<p><img class="img-article-left" src="{{book.photo.url}}" alt="photo"></p>
-{% endif %}
+<div class="d-flex flex-column flex-grow-1 p-3 text-white bg-light">
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if book.photo %}
+                <img src="{{ book.photo.url }}" class="img-fluid rounded-start" alt="photo">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-header">
+                    <p>Category: <a href="{{ book.cat.get_absolute_url }}">{{book.cat}}</a></p>
+                    <p>Date: {{book.time_update|date:"d-m-Y H:i:s"}}</p>
+                    {% include 'includes/favorite.html' %}
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title">{{book.title}}</h2>
+                    <h4 class="card-subtitle">{{book.author}}</h4>
+                    {% autoescape on %}
+                    <p class="card-text">{{book.description|linebreaks|truncatewords:50}}</p>
+                    {% endautoescape %}
+                    <a href="{{ book.get_absolute_url }}" class="btn btn-primary">Read book</a>
+                    {% if book.pdf_file %}
+                        <a href="{{ book.pdf_file.url }}" class="btn btn-primary" download>Download PDF</a>
+                    {% endif %}
+                    <a class="btn btn-primary" href="{% url 'edit_book' book.id %}">Edit</a>
+                    <a class="btn btn-danger" href="{% url 'delete_book' book.id %}">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-{{book.description|linebreaks}}
 {% endblock %}

@@ -2,20 +2,28 @@
 
 {% block content %}
 
-<h1>{{title}}</h1>
+<h1 class="mb-3">{{title}}</h1>
 
-<form method="post">
-    {% csrf_token %}
-    
-    <div class="form-error">{{ form.non_field_errors }}</div>
-    <!-- {{ form.as_p }} -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-error">{{ form.non_field_errors }}</div>
+                <!-- {{ form.as_p }} -->
 
-    {% for f in form %}
-    <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
-    <div class="form-error">{{ f.errors }}</div>
-    {% endfor %}
-    
-    <button type="submit">Sign Up</button>
-</form>
+                {% for f in form %}
+                <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
+                <div class="form-error">{{ f.errors }}</div>
+                {% endfor %}
+                
+                <div class="d-grid">
+                    <button class="primaryAction mt-3 btn btn-dark" type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

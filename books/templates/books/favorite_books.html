@@ -1,11 +1,12 @@
 {% extends 'books/base.html' %}
 
 {% block content %}
-
-<h2>Search Results for "{{ search_query }}":</h2>
+<h2>Favorite books</h2>
 
 <div class="d-flex flex-column flex-grow-1 p-3 text-white bg-light">
     {% for book in books %}
+        {% for favorite_book in favorite_books %}
+            {% if book == favorite_book.book %}
     <div class="card mb-3">
         <div class="row g-0">
             <div class="col-md-4">
@@ -27,7 +28,7 @@
                     {% endautoescape %}
                     <a href="{{ book.get_absolute_url }}" class="btn btn-primary">Read book</a>
                     {% if book.pdf_file %}
-                        <a href="{{ book.pdf_file.url }}" class="btn btn-primary" download>Download PDF</a>
+                    <a href="{{ book.pdf_file.url }}" class="btn btn-primary" download>Download PDF</a>
                     {% endif %}
                     {% if user.is_authenticated and book.user == user %}
                         <a class="btn btn-primary" href="{% url 'edit_book' book.pk %}">Edit</a>
@@ -37,9 +38,10 @@
             </div>
         </div>
     </div>
+            {% endif %}
+        {% endfor %}
     {% endfor %}
 </div>
 
 <br>
-
 {% endblock %}

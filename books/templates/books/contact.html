@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>{{title}}</h1>
+<h1 class="mb-3">{{title}}</h1>
 
 {% if messages %}
     <ul class="messages">
@@ -23,7 +23,9 @@
     <div class="form-error">{{ f.errors }}</div>
     {% endfor %}
     
-    <button type="submit">Send</button>
+    <div class="d-grid">
+        <button class="primaryAction mt-3 btn btn-dark" type="submit">Send</button>
+    </div>
 </form>
 
 {% endblock %}

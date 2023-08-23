@@ -1,7 +1,39 @@
-{% for cat in categories %}
-    {% if cat.pk == cat_selected %}
-        <li class="selected">{{ cat.name }}</li>
-    {% else %}
-        <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }}</a></li>
-    {% endif %}
-{% endfor %}
+{% extends 'books/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3 mb-3">
+            <div class="card">
+                <a href="{% url 'all_books' %}">
+                    <img src="{% static 'books/images/category.jpg' %}" class="card-img-top" alt="All categories">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">All categories</h5>
+                </div>
+            </div>
+        </div>
+        {% for cat in cats %}
+            {% if cat.books__count > 0 %}
+        <div class="col-sm-3 mb-3">
+            <div class="card">
+                <a href="{{ cat.get_absolute_url }}">
+                    <img src="{% static 'books/images/category.jpg' %}" class="card-img-top" alt="{{cat.name}}">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{cat.name}}</h5>
+                </div>
+            </div>
+        </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'books/base.html' %}
+
+{% block content %}
+  <h2>Edit Your Profile</h2>
+  <br>
+  <form method="post">
+    {% csrf_token %}
+    {% for f in form %}
+    <div class="mb-3">
+        <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
+        <div class="form-error">{{ f.errors }}</div>
+    </div>
+    {% endfor %}
+    <button class="primaryAction mt-3 btn btn-dark" type="submit">Update Profile</button><br>
+  </form>
+
+  <br>
+
+  <a href="{% url 'account_email' %}">E-mail Addresses</a>
+{% endblock %}

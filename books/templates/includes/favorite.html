@@ -1,0 +1,22 @@
+{% load static %}
+
+{% if favorite_books.exists %}
+    {% for favorite_book in favorite_books %}
+        {% if book == favorite_book.book %}
+<form method="post" action="{% url 'remove_from_favorites' book.pk %}">
+    {% csrf_token %}
+    <button type="submit" style="border: none;"><img src="{% static 'books/images/favorite_true.png' %}" width="50" alt="favorite_true"></button>
+</form>
+        {% else %}
+<form method="post" action="{% url 'add_to_favorites' book.pk %}">
+    {% csrf_token %}
+    <button type="submit" style="border: none;"><img src="{% static 'books/images/favorite_false.png' %}" width="50" alt="favorite_false"></button>
+</form>
+        {% endif %}
+    {% endfor %}
+{% else %}
+<form method="post" action="{% url 'add_to_favorites' book.pk %}">
+    {% csrf_token %}
+    <button type="submit" style="border: none;"><img src="{% static 'books/images/favorite_false.png' %}" width="50" alt="favorite_false"></button>
+</form>
+{% endif %}

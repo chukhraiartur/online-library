@@ -7,9 +7,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav">
-                {% for m in menu %}
-                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url m.url_name %}">{{ m.title }}</a></li>
-                {% endfor %}
+                {% if request.user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'add_book' %}">Add book</a></li>
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'my_books' %}">My books</a></li>
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'favorite_books' %}">Favorite Books</a></li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link" aria-current="page" href="{% url 'contact' %}">Contact</a></li>
             </ul>
 
             <form class="d-flex mx-auto" role="search" method="get" action="{% url 'search' %}">
@@ -24,7 +27,7 @@
 
             <ul class="navbar-nav ml-auto">
                 {% if request.user.is_authenticated %}
-                <li class="nav-item"><span class="nav-link">{{ request.user.username }}</span></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">{{ request.user.username }}</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'sign_out' %}">Sign Out</a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'sign_in' %}">Sign In</a></li>

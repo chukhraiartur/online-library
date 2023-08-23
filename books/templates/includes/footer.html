@@ -4,10 +4,12 @@
             <li class="nav-item"><a href="{% url 'home' %}" class="nav-link px-2 text-muted">Home</a></li>
             {% if request.user.is_authenticated %}
             <li class="nav-item"><a href="{% url 'add_book' %}" class="nav-link px-2 text-muted">Add Book</a></li>
+            <li class="nav-item"><a href="{% url 'my_books' %}" class="nav-link px-2 text-muted">My books</a></li>
+            <li class="nav-item"><a href="{% url 'favorite_books' %}" class="nav-link px-2 text-muted">Favorite Books</a></li>
             {% endif %}
             <li class="nav-item"><a href="{% url 'search' %}" class="nav-link px-2 text-muted">Search</a></li>
             <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link px-2 text-muted">Contact</a></li>
         </ul>
-        <p class="text-center text-muted">&copy; 2023</p>
+        <p class="text-center text-muted">&copy; 2023 Online Library</p>
     </footer>
 </div>
