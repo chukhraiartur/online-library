@@ -1,7 +1,7 @@
 # Online Library
 
 <div align="center">
-   <img src="https://github.com/chukhraiartur/online-library/assets/81998012/6b4afcb2-d67b-4576-9b0d-7e22ed90b5f8" width="300" alt="Logo">
+   <img src="https://github.com/chukhraiartur/online-library/assets/81998012/a1fdcc6b-6dbf-4db4-90b6-b6e4edbb051a" width="300" alt="Logo">
 </div>
 
 <br>
