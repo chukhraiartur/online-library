@@ -1,10 +1,11 @@
 {% extends 'books/base.html' %}
 
 {% block content %}
-  <h2>Edit Book</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Changes</button>
-  </form>
+
+<br>
+
+<h1 class="mb-3 d-flex justify-content-center align-items-center">{{ title }}</h1>
+
+{% include 'includes/form.html' %}
+
 {% endblock %}

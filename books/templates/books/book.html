@@ -28,8 +28,10 @@
                     {% if book.pdf_file %}
                         <a href="{{ book.pdf_file.url }}" class="btn btn-primary" download>Download PDF</a>
                     {% endif %}
-                    <a class="btn btn-primary" href="{% url 'edit_book' book.id %}">Edit</a>
-                    <a class="btn btn-danger" href="{% url 'delete_book' book.id %}">Delete</a>
+                    {% if user.is_authenticated and book.user == user %}
+                        <a class="btn btn-primary" href="{% url 'edit_book' book.pk %}">Edit</a>
+                        <a class="btn btn-danger" href="{% url 'delete_book' book.pk %}">Delete</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

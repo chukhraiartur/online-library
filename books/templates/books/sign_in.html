@@ -9,12 +9,16 @@
 
 {% block content %}
 
+<br>
 
-<h1 class="mb-3">{{title}}</h1>
+<h1 class="mb-3 d-flex justify-content-center align-items-center">{{ title }}</h1>
+
+<br>
 
 <div class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
             <form method="post">
                 {% csrf_token %}
                 
@@ -29,12 +33,13 @@
                 {% endfor %}
                 
                 <div class="d-grid">
-                    <button class="primaryAction mt-3 btn btn-dark" type="submit">Sign In</button><br>
+                    <button class="primaryAction mt-3 btn btn-dark" type="submit">{{ button }}</button><br>
                     <a class="button secondaryAction text-dark text-center" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
                 </div>
             </form>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
             {% get_providers as socialaccount_providers %}
 
             {% if socialaccount_providers %}

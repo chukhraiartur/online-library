@@ -52,7 +52,7 @@ class AddBook(LoginRequiredMixin, DataMixin, CreateView):
     
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Add book')
+        c_def = self.get_user_context(title='Add book', button='Add')
         return dict(list(context.items()) + list(c_def.items()))
     
     def form_valid(self, form):
@@ -95,7 +95,7 @@ class SignUpUser(DataMixin, CreateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Sign Up')
+        c_def = self.get_user_context(title='Sign Up', button='Sign Up')
         return dict(list(context.items()) + list(c_def.items()))
 
     def form_valid(self, form):
@@ -109,7 +109,7 @@ class SignInUser(DataMixin, LoginView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Sign In')
+        c_def = self.get_user_context(title='Sign In', button='Sign In')
         return dict(list(context.items()) + list(c_def.items()))
 
 class ContactFormView(SuccessMessageMixin, DataMixin, FormView):
@@ -119,7 +119,7 @@ class ContactFormView(SuccessMessageMixin, DataMixin, FormView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Contact')
+        c_def = self.get_user_context(title='Contact', button='Send')
         return dict(list(context.items()) + list(c_def.items()))
     
     def form_valid(self, form):
@@ -209,18 +209,23 @@ class MyBooksView(DataMixin, ListView):
         c_def = self.get_user_context(title='My Books')
         return dict(list(context.items()) + list(c_def.items()))
     
-class EditBookView(LoginRequiredMixin, UpdateView):
+class EditBookView(LoginRequiredMixin, DataMixin, UpdateView):
     model = Books
-    form_class = BooksForm
+    form_class = EditBookForm
     template_name = 'books/edit_book.html'
     context_object_name = 'book'
     pk_url_kwarg = 'book_id'
-    
+
     def get_queryset(self):
         return Books.objects.filter(user=self.request.user)
 
     def get_success_url(self):
         return reverse('my_books')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Edit Book', button='Save')
+        return dict(list(context.items()) + list(c_def.items()))
     
 class DeleteBookView(LoginRequiredMixin, DeleteView):
     model = Books

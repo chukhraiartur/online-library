@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-center">
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <form action="{% url 'add_book' %}" method="post" enctype="multipart/form-data">
+                <!-- enctype is needed to pass some data with files -->
+                <!-- to protect against 'csrf' attacks -->
+                {% csrf_token %}    
+
+                <!-- display all form fields with 'p' tag -->
+                <!-- {{ form.as_p }} -->
+
+                <div class="form-error">{{ form.non_field_errors }}</div>
+
+                {% for element in form %}
+                <p><label class="form-label" for="{{ element.id_for_label }}">{{element.label}}: </label>{{ element }}</p>
+                <div class="form-error">{{ element.errors }}</div>
+                {% endfor %}
+
+                <div class="d-grid">
+                    <button class="primaryAction mt-3 btn btn-dark" type="submit">{{ button }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

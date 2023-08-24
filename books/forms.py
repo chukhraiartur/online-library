@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.text import slugify
 from captcha.fields import CaptchaField
 from dal import autocomplete
 
@@ -15,22 +16,60 @@ class AddBookForm(forms.ModelForm):
 
     class Meta:
         model = Books
-        fields = ['title', 'slug', 'author', 'description', 'photo', 'pdf_file', 'is_published', 'cat']     # fields = '__all__'
+        fields = ('title', 'author', 'description', 'photo', 'pdf_file', 'is_published', 'cat')
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'slug': forms.TextInput(attrs={'class': 'form-input'}),
-            'author': forms.Textarea(attrs={'cols': 39, 'rows': 5, 'style':'resize:none', 'class': 'form-input'}),
-            'description': forms.Textarea(attrs={'cols': 39, 'rows': 10, 'style':'resize:none', 'class': 'form-input'}),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'cols': 39, 'rows': 10, 'style': 'resize:none', 'class': 'form-control'}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'pdf_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'cat': forms.Select(attrs={'class': 'form-select'}),
         }
-    
+
     def clean_title(self):
         ''' User validator '''
         title = self.cleaned_data['title']
         if len(title) > 200:
-            raise ValidationError('The title is longer than 200 characters')
-        
+            raise forms.ValidationError('The title is longer than 200 characters')
+
         return title
     
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.slug = slugify(instance.title)  # Slug generation based on the name
+        if commit:
+            instance.save()
+        return instance
+
+class EditBookForm(forms.ModelForm):
+    class Meta:
+        model = Books
+        fields = ('title', 'author', 'description', 'photo', 'pdf_file', 'is_published', 'cat')
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'cols': 39, 'rows': 10, 'style': 'resize:none', 'class': 'form-control'}),
+            'photo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'pdf_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'cat': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+    def clean_title(self):
+        ''' User validator '''
+        title = self.cleaned_data['title']
+        if len(title) > 200:
+            raise forms.ValidationError('The title is longer than 200 characters')
+        return title
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.slug = slugify(instance.title)  # Генерация слага на основе названия
+        if commit:
+            instance.save()
+        return instance
+
 class SignUpUserForm(UserCreationForm):
     username = forms.CharField(label='Username', widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
@@ -68,4 +107,4 @@ class UserProfileForm(forms.ModelForm):
 class BooksForm(forms.ModelForm):
     class Meta:
         model = Books
-        fields = ['title', 'author', 'description', 'photo', 'pdf_file', 'cat']  # Use 'cat' instead of 'category'
+        fields = ['title', 'author', 'description', 'photo', 'pdf_file', 'cat']
