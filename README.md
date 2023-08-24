@@ -19,5 +19,7 @@ In this project, I used technologies such as:
 - PostgreSQL
 - Redis
 
-Implemented features such as:
-- Captcha
+To-Do:
+- add book reading page
+- add docker so people can deploy the application on their system
+- add a mailing list of new books to registered users every 24 hours
